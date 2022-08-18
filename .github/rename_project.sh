@@ -16,10 +16,10 @@ echo "Description: $description";
 
 echo "Renaming project..."
 
-original_author="author_name"
-original_name="project_name"
-original_urlname="project_urlname"
-original_description="project_description"
+original_author="pappacena"
+original_name="asyncio_inspector"
+original_urlname="asyncio-inspector"
+original_description="Awesome asyncio_inspector created by pappacena"
 # for filename in $(find . -name "*.*") 
 for filename in $(git ls-files) 
 do
@@ -30,9 +30,9 @@ do
     echo "Renamed $filename"
 done
 
-mv project_name $name
+mv asyncio_inspector $name
 
 # This command runs only once on GHA!
-if [ -f .github/workflows/project_name.yml ]; then
+if [ -f .github/workflows/asyncio_inspector.yml ]; then
     mv .github/workflows/rename_project.yml .github/workflows/rename_project.yml.disabled
 fi
