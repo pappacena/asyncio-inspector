@@ -1,34 +1,26 @@
 from asyncio import AbstractEventLoop
-from asyncio.events import Handle
+from collections import deque
 from contextlib import contextmanager
 
-
-def patch_handler(handler: Handle) -> None:
-    """"Patches the given handle object to enable inspection"""""
-    import ipdb; ipdb.set_trace()
-    handler._inspector_enabled = True
+from asyncio_inspector.events import ObservableDeque
+from asyncio_inspector.stats import BaseStatsTracker
 
 
-
-def patch_event_loop_handler_creator(event_loop: AbstractEventLoop, method_name: str) -> None:
-    orig_method = getattr(event_loop, method_name)
-    def wrapper(*args, **kwargs):
-        handler = orig_method(*args, **kwargs)
-        return handler
-    setattr(event_loop, method_name, wrapper)
-    setattr(event_loop, f'_orig_{method_name}', orig_method)
+def patch_event_loop_handler_creator(event_loop: AbstractEventLoop, stats_tracker: BaseStatsTracker) -> None:
+    obs_deque = ObservableDeque(event_loop._ready)
+    obs_deque.stats_tracker = stats_tracker
+    event_loop._ready = obs_deque
 
 
-
-def unpatch_event_loop_handler_creator(event_loop: AbstractEventLoop, method_name: str) -> None:
-    orig_method = getattr(event_loop, f'orig_{method_name}')
-    setattr(event_loop, method_name, orig_method)
-
+def unpatch_event_loop_handler_creator(event_loop: AbstractEventLoop) -> None:
+    event_loop._ready = deque(event_loop._ready)
 
 
 @contextmanager
-def enable_inpection(event_loop: AbstractEventLoop) -> None:
+def enable_inpection(event_loop: AbstractEventLoop, stats_tracker=None) -> BaseStatsTracker:
     """Patches the given event loop to enable inspection."""
-    patch_event_loop_handler_creator(event_loop, 'call_soon')
-    yield
-    unpatch_event_loop_handler_creator(event_loop, 'call_soon')
+    if stats_tracker is None:
+        stats_tracker = BaseStatsTracker()
+    patch_event_loop_handler_creator(event_loop, stats_tracker)
+    yield stats_tracker
+    unpatch_event_loop_handler_creator(event_loop)
