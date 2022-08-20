@@ -1,5 +1,4 @@
 import asyncio
-import pytest
 
 from asyncio_inspector import enable_inpection
 
@@ -15,4 +14,4 @@ def test_patch_event_loop_works():
         loop.call_soon(do_nothing)
         loop.call_soon(loop.stop)
         loop.run_forever()
-    assert stats_tracker.calls_count
+    assert stats_tracker.call_counts == {do_nothing: 1, loop.stop: 1}
