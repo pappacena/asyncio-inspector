@@ -1,6 +1,5 @@
-from asyncio import Task
 from collections import defaultdict
-from typing import Any, Dict
+from typing import Dict
 
 from asyncio_inspector.events import ObservableHandle
 

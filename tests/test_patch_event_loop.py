@@ -27,7 +27,7 @@ def test_patch_even_loop() -> None:
 
 
 def test_patch_event_loop_context_manager() -> None:
-    """"Makes sure we can patch even loop with a context manager"""
+    """ "Makes sure we can patch even loop with a context manager"""
     loop = asyncio.get_event_loop()
     with enable_inpection(loop) as stats_tracker:
         assert isinstance(loop._ready, ObservableDeque)
