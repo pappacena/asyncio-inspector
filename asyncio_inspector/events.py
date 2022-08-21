@@ -1,5 +1,6 @@
-from asyncio import Handle
+from asyncio import Handle, Task
 from collections import deque
+import time
 
 
 class ObservableHandle(Handle):
@@ -21,8 +22,20 @@ class ObservableHandle(Handle):
 
     def _run(self, *args, **kwargs):
         """Executes the original handle, tracking statistics"""
-        self.stats_tracker.track_call(self)
+        start = time.time_ns()
         super(ObservableHandle, self)._run(*args, **kwargs)
+        end = time.time_ns()
+        self.stats_tracker.track_call(self, start, end)
+
+    def get_callback(self):
+        callback = self._callback
+        # Check for TaskStepMethWrapper builtin type, which is used in
+        # asyncio.run method to wrap the original coro.
+        if hasattr(callback, '__self__') and hasattr(callback.__self__, 'get_coro'):
+            callback = callback.__self__.get_coro().__qualname__
+        else:
+            callback = callback.__qualname__
+        return callback
 
 
 class ObservableDeque(deque):
