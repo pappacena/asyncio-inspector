@@ -1,11 +1,13 @@
 from asyncio import Task
 from collections import defaultdict
 from typing import Any, Dict
+
 from asyncio_inspector.events import ObservableHandle
 
 
 class BaseStatsTracker:
-    """"Basic stats tracker"""""
+    """"Basic stats tracker""" ""
+
     call_counts: Dict[str, int]
     total_time: Dict[str, int]
     max_time: Dict[str, int]
@@ -18,7 +20,8 @@ class BaseStatsTracker:
         self.min_time = defaultdict(int)
 
     def track_call(
-        self, handle: ObservableHandle,
+        self,
+        handle: ObservableHandle,
         start_timestamp: int,
         end_timestamp: int,
     ) -> None:
