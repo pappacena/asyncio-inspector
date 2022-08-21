@@ -1,18 +1,24 @@
 from asyncio import Handle, Task
 from collections import deque
 import time
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from asyncio_inspector.stats import BaseStatsTracker
 
 
 class ObservableHandle(Handle):
     """Subclass of handle that enables observability"""
     __slots__ = ('stats_tracker', )
 
+    stats_tracker: 'BaseStatsTracker'
+
     @classmethod
-    def from_handle(cls, obj: Handle, stats_tracker: 'BaseStatsTracker') -> 'ObservableDeque':
+    def from_handle(cls, obj: Handle, stats_tracker) -> 'ObservableHandle':
         """"Creates a new ObservableHandle from the given Handle object"""""
         obs_handle = cls.__new__(cls)
         attrs_to_copy = [
-            i for i in Handle.__slots__ if i != '__weakref__'
+            i for i in Handle.__slots__ if i != '__weakref__'  # type: ignore
         ]
         for attr in attrs_to_copy:
             value = getattr(obj, attr)
