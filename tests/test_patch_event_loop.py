@@ -22,24 +22,21 @@ def test_patch_even_loop() -> None:
     finally:
         uninspect(loop)
         assert not isinstance(loop._ready, ObservableDeque)
-    assert stats_tracker.call_counts == {
-        "do_nothing": 1,
-        "BaseEventLoop.stop": 1,
-    }
+    assert "do_nothing" in stats_tracker.call_counts
+    assert stats_tracker.call_counts["do_nothing"] == 1
 
 
 def test_patch_event_loop_context_manager() -> None:
-    """ "Makes sure we can patch even loop with a context manager"""
+    """"Makes sure we can patch even loop with a context manager"""
     loop = asyncio.get_event_loop()
     with enable_inpection(loop) as stats_tracker:
         assert isinstance(loop._ready, ObservableDeque)
         loop.call_soon(do_nothing)
         loop.call_soon(loop.stop)
         loop.run_forever()
-    assert stats_tracker.call_counts == {
-        "do_nothing": 1,
-        "BaseEventLoop.stop": 1,
-    }
+
+    assert "do_nothing" in stats_tracker.call_counts
+    assert stats_tracker.call_counts["do_nothing"] == 1
     assert not isinstance(loop._ready, ObservableDeque)
 
 
@@ -53,6 +50,6 @@ def test_patch_event_loop_from_within() -> None:
         return stats_tracker
 
     stats_tracker = asyncio.run(main())
-    assert stats_tracker.call_counts == {
-        "test_patch_event_loop_from_within.<locals>.main": 1
-    }
+    method_name = "test_patch_event_loop_from_within.<locals>.main"
+    assert method_name in stats_tracker.call_counts
+    assert stats_tracker.call_counts[method_name] == 1
