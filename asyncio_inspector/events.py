@@ -42,8 +42,13 @@ class ObservableHandle(Handle):
             callback.__self__, "get_coro"
         ):
             callback = callback.__self__.get_coro().__qualname__
-        else:
+        elif hasattr(callback, "__qualname__"):
             callback = callback.__qualname__
+        elif hasattr(callback, "__name__"):
+            callback = callback.__name__
+        else:
+            # Last resource, just to make sure we track something
+            callback = str(callback)
         return callback
 
 
