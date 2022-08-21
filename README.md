@@ -36,7 +36,6 @@ Or with a context manager:
 ```py
 loop = asyncio.get_event_loop()
 with enable_inpection(loop) as stats_tracker:
-    assert isinstance(loop._ready, ObservableDeque)
     await my_async_function()
     await another_async_function()
 ```
