@@ -34,8 +34,9 @@ class ObservableHandle(Handle):
         end = time.time_ns()
         self.stats_tracker.track_call(self, start, end)
 
-    def get_callback(self):
-        callback = self._callback
+    def get_callback(self) -> str:
+        """"Returns the string representation of the callback""" ""
+        callback = self._callback  # type: ignore
         # Check for TaskStepMethWrapper builtin type, which is used in
         # asyncio.run method to wrap the original coro.
         if hasattr(callback, "__self__") and hasattr(
