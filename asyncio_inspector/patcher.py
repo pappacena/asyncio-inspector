@@ -1,7 +1,7 @@
 from asyncio import AbstractEventLoop
 from collections import deque
 from contextlib import contextmanager
-from typing import Iterator
+from typing import Any, Iterator, Tuple
 
 from asyncio_inspector.events import ObservableDeque
 from asyncio_inspector.stats import BaseStatsTracker
@@ -27,9 +27,9 @@ def enable_inpection(
     reporter=None,
 ) -> Iterator:
     """Patches the given event loop to enable inspection."""
-    if stats_tracker is None:
-        stats_tracker = BaseStatsTracker()
-    reporter.stats_tracker = stats_tracker
+    stats_tracker, reporter = _wire_reporter_and_stats_tracker(
+        stats_tracker, reporter
+    )
     patch_event_loop_handler_creator(event_loop, stats_tracker)
     yield stats_tracker
     unpatch_event_loop_handler_creator(event_loop)
@@ -38,12 +38,22 @@ def enable_inpection(
 def inspect(
     event_loop: AbstractEventLoop, *, stats_tracker=None, reporter=None
 ) -> BaseStatsTracker:
-    if stats_tracker is None:
-        stats_tracker = BaseStatsTracker()
-    reporter.stats_tracker = stats_tracker
+    stats_tracker, reporter = _wire_reporter_and_stats_tracker(
+        stats_tracker, reporter
+    )
     patch_event_loop_handler_creator(event_loop, stats_tracker)
     return stats_tracker
 
 
 def uninspect(event_loop: AbstractEventLoop) -> None:
     unpatch_event_loop_handler_creator(event_loop)
+
+
+def _wire_reporter_and_stats_tracker(
+    stats_tracker, reporter
+) -> Tuple[Any, Any]:
+    if stats_tracker is None:
+        stats_tracker = BaseStatsTracker()
+    if reporter is not None:
+        reporter.stats_tracker = stats_tracker
+    return stats_tracker, reporter
