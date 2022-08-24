@@ -21,21 +21,26 @@ def unpatch_event_loop_handler_creator(event_loop: AbstractEventLoop) -> None:
 
 @contextmanager
 def enable_inpection(
-    event_loop: AbstractEventLoop, stats_tracker=None
+    event_loop: AbstractEventLoop,
+    *,
+    stats_tracker=None,
+    reporter=None,
 ) -> Iterator:
     """Patches the given event loop to enable inspection."""
     if stats_tracker is None:
         stats_tracker = BaseStatsTracker()
+    reporter.stats_tracker = stats_tracker
     patch_event_loop_handler_creator(event_loop, stats_tracker)
     yield stats_tracker
     unpatch_event_loop_handler_creator(event_loop)
 
 
 def inspect(
-    event_loop: AbstractEventLoop, stats_tracker=None
+    event_loop: AbstractEventLoop, *, stats_tracker=None, reporter=None
 ) -> BaseStatsTracker:
     if stats_tracker is None:
         stats_tracker = BaseStatsTracker()
+    reporter.stats_tracker = stats_tracker
     patch_event_loop_handler_creator(event_loop, stats_tracker)
     return stats_tracker
 
