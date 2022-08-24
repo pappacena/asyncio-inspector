@@ -35,3 +35,4 @@ def test_logger_reporter():
     last_log_call = logger.debug.call_args_list[-1]
     msg = last_log_call.args[0]
     assert "'do_nothing': 5" in msg
+    assert "Queue size: 0" in msg

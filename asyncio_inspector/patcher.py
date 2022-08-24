@@ -12,6 +12,7 @@ def patch_event_loop_handler_creator(
 ) -> None:
     obs_deque = ObservableDeque(event_loop._ready)  # type: ignore
     obs_deque.stats_tracker = stats_tracker
+    stats_tracker.ready_queue = obs_deque
     event_loop._ready = obs_deque  # type: ignore
 
 

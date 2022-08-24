@@ -1,18 +1,20 @@
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, Optional
 
-from asyncio_inspector.events import ObservableHandle
+from asyncio_inspector.events import ObservableDeque, ObservableHandle
 
 
 class BaseStatsTracker:
     """"Basic stats tracker""" ""
 
+    ready_queue: Optional[ObservableDeque]
     call_counts: Dict[str, int]
     total_time: Dict[str, int]
     max_time: Dict[str, int]
     min_time: Dict[str, int]
 
-    def __init__(self) -> None:
+    def __init__(self, ready_queue: ObservableDeque = None) -> None:
+        self.ready_queue = ready_queue
         self.call_counts = defaultdict(int)
         self.total_time = defaultdict(int)
         self.max_time = defaultdict(int)

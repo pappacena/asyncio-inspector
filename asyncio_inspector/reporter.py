@@ -38,7 +38,15 @@ class LoggerReporter(Thread, BaseReporter):
             if self.stats_tracker is None:
                 time.sleep(self.sleep_period)
                 continue
-            self.logger.debug(f"Call counts: {self.stats_tracker.call_counts}")
+            ready_queue_size = (
+                len(self.stats_tracker.ready_queue)
+                if self.stats_tracker.ready_queue is not None
+                else 0
+            )
+            self.logger.debug(
+                f"Queue size: {ready_queue_size}\n"
+                f"Call counts: {self.stats_tracker.call_counts}"
+            )
             time.sleep(self.sleep_period)
 
     def start(self) -> None:
