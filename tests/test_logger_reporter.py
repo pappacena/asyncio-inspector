@@ -26,9 +26,12 @@ def test_logger_reporter():
         loop.call_soon(loop.stop)
         loop.run_forever()
 
-    time.sleep(0.15)
+    # Wait at least 2x the sleep_period
+    time.sleep(0.2)
     reporter.stop()
 
-    assert logger.debug.call_count == 1
-    msg = logger.debug.call_args[0][0]
+    # And make sure the reporter logged at least once
+    assert logger.debug.call_count >= 1
+    last_log_call = logger.debug.call_args_list[-1]
+    msg = last_log_call.args[0]
     assert "'do_nothing': 5" in msg
