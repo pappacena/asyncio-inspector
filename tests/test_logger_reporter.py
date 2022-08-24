@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import platform
 import time
 from unittest import mock
 
@@ -35,4 +35,8 @@ def test_logger_reporter():
     last_log_call = logger.debug.call_args_list[-1]
     msg = last_log_call.args[0]
     assert "'do_nothing': 5" in msg
-    assert "Queue size: 0" in msg
+
+    if platform.system() == "Windows":
+        assert "Queue size: 1\n" in msg
+    else:
+        assert "Queue size: 0\n" in msg
