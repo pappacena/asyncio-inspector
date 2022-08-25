@@ -13,11 +13,11 @@ class BaseStatsTracker:
     """"Basic stats tracker""" ""
 
     ready_queue: Optional[ObservableDeque]
-    call_counts: ValueSortedDict[str, int]
-    total_time: ValueSortedDict[str, int]
-    avg_time: ValueSortedDict[str, int]
-    max_time: ValueSortedDict[str, int]
-    min_time: ValueSortedDict[str, int]
+    call_counts: ValueSortedDict
+    total_time: ValueSortedDict
+    avg_time: ValueSortedDict
+    max_time: ValueSortedDict
+    min_time: ValueSortedDict
 
     def __init__(self, ready_queue: ObservableDeque = None) -> None:
         self.ready_queue = ready_queue

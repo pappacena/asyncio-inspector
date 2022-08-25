@@ -36,9 +36,6 @@ def test_logger_reporter():
     last_log_call = logger.debug.call_args_list[-1]
     msg = last_log_call.args[0]
     assert "Call counts: do_nothing: 5 |" in msg
-    assert "Max exec times: do_nothing: " in msg
-    assert "Total exec times: do_nothing: " in msg
-    assert "Avg exec times: do_nothing: " in msg
 
     assert re.search(r"Max exec times: do_nothing: \d+ ", msg, re.MULTILINE)
     assert re.search(r"Total exec times: do_nothing: \d+ ", msg, re.MULTILINE)
