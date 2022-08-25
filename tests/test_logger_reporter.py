@@ -1,5 +1,6 @@
 import asyncio
 import platform
+import re
 import time
 from unittest import mock
 
@@ -34,7 +35,13 @@ def test_logger_reporter():
     assert logger.debug.call_count >= 1
     last_log_call = logger.debug.call_args_list[-1]
     msg = last_log_call.args[0]
-    assert "'do_nothing': 5" in msg
+    assert "Call counts: do_nothing: 5 |" in msg
+
+    assert re.search(r"Max exec times: do_nothing: \d+ ", msg, re.MULTILINE)
+    assert re.search(r"Total exec times: do_nothing: \d+ ", msg, re.MULTILINE)
+    assert re.search(
+        r"Avg exec times: do_nothing: \d+(\.\d+)? ", msg, re.MULTILINE
+    )
 
     if platform.system() == "Windows":
         assert "Queue size: 1\n" in msg

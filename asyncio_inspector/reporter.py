@@ -25,6 +25,7 @@ class LoggerReporter(Thread, BaseReporter):
     logger: Logger
     running: bool
     sleep_period: int
+    show_top_n: int
 
     def __init__(self, logger: Logger) -> None:
         super().__init__()
@@ -32,6 +33,13 @@ class LoggerReporter(Thread, BaseReporter):
         self.running = True
         self.sleep_period = 1
         self.daemon = True
+        self.show_top_n = 10
+
+    def _get_line(self, data) -> str:
+        """ "Returns the top-n itens in data as a string"""
+        return " | ".join(
+            f"{k}: {v}" for k, v in data.items()[: self.show_top_n]
+        )
 
     def run(self) -> None:
         while self.running:
@@ -43,9 +51,13 @@ class LoggerReporter(Thread, BaseReporter):
                 if self.stats_tracker.ready_queue is not None
                 else 0
             )
+            fmt = self._get_line
             self.logger.debug(
                 f"Queue size: {ready_queue_size}\n"
-                f"Call counts: {self.stats_tracker.call_counts}"
+                f"Call counts: {fmt(self.stats_tracker.call_counts)}\n"
+                f"Max exec times: {fmt(self.stats_tracker.max_time)}\n"
+                f"Total exec times: {fmt(self.stats_tracker.total_time)}\n"
+                f"Avg exec times: {fmt(self.stats_tracker.avg_time)}"
             )
             time.sleep(self.sleep_period)
 
