@@ -1,9 +1,10 @@
 from asyncio import AbstractEventLoop
 from collections import deque
 from contextlib import contextmanager
+from functools import partial
 from typing import Any, Iterator, Tuple
 
-from asyncio_inspector.events import ObservableDeque
+from asyncio_inspector.events import ObservableDeque, ObservableTask
 from asyncio_inspector.stats import BaseStatsTracker
 
 
@@ -14,6 +15,9 @@ def patch_event_loop_handler_creator(
     obs_deque.stats_tracker = stats_tracker
     stats_tracker.ready_queue = obs_deque
     event_loop._ready = obs_deque  # type: ignore
+    event_loop.set_task_factory(
+        partial(ObservableTask, stats_tracker=stats_tracker)  # type: ignore
+    )
 
 
 def unpatch_event_loop_handler_creator(event_loop: AbstractEventLoop) -> None:

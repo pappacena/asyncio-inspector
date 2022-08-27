@@ -29,25 +29,24 @@ class BaseStatsTracker:
 
     def track_call(
         self,
-        handle: ObservableHandle,
+        identifier: str,
         start_timestamp: int,
         end_timestamp: int,
     ) -> None:
-        callback = handle.get_callback()
-        if callback not in self.call_counts:
-            self.call_counts[callback] = 0
-            self.total_time[callback] = 0
-            self.avg_time[callback] = 0
-            self.max_time[callback] = 0
-            self.min_time[callback] = 0
+        if identifier not in self.call_counts:
+            self.call_counts[identifier] = 0
+            self.total_time[identifier] = 0
+            self.avg_time[identifier] = 0
+            self.max_time[identifier] = 0
+            self.min_time[identifier] = 0
 
-        self.call_counts[callback] += 1
+        self.call_counts[identifier] += 1
         elapsed_time = end_timestamp - start_timestamp
-        self.total_time[callback] += elapsed_time
-        if elapsed_time > self.max_time[callback]:
-            self.max_time[callback] = elapsed_time
-        if elapsed_time < self.min_time[callback]:
-            self.min_time[callback] = elapsed_time
-        self.avg_time[callback] = (
-            self.total_time[callback] / self.call_counts[callback]
+        self.total_time[identifier] += elapsed_time
+        if elapsed_time > self.max_time[identifier]:
+            self.max_time[identifier] = elapsed_time
+        if elapsed_time < self.min_time[identifier]:
+            self.min_time[identifier] = elapsed_time
+        self.avg_time[identifier] = (
+            self.total_time[identifier] / self.call_counts[identifier]
         )
